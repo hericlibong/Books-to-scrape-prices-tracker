@@ -1,62 +1,52 @@
-import requests 
-from bs4 import BeautifulSoup
-import csv
+from data_extraction import*
+from urllib.parse import urljoin
+from data_saver import save_to_csv
 
+url = 'https://books.toscrape.com/'
 
+def get_category_links(start_url):
+    soup = get_soup(start_url)
+    category_list = []
+    list_link = soup.find('ul', class_= 'nav').find_all('li')
+    for a in list_link:
+        category_list.append(start_url + a.find('a')['href'])
+   
+    return category_list[1:]
 
-"""
-● product_page_url
-● universal_ product_code (upc)
-● title
-● price_including_tax
-● price_excluding_tax
-● number_available
-● product_description
-● category
-● review_rating
-● image_url
-
-
-"""
-
-#Extraction des données d'un livre
-
-url = 'https://books.toscrape.com/catalogue/i-had-a-nice-time-and-other-lies-how-to-find-love-sht-like-that_814/index.html'
-response = requests.get(url)
-soup = BeautifulSoup(response.content, 'html.parser')
-product_page_url = url
-universal_product_code = soup.find_all('tr')[0].td.text
-title = soup.find('h1').get_text(strip=True)
-price_including_tax = price_including_tax = soup.find_all('tr')[3].td.text.strip()[1:]
-price_excluding_tax = price_including_tax = soup.find_all('tr')[2].td.text.strip()[1:]
-num_available_raw = soup.find_all('tr')[5].td.text
-num_available = num_available_raw.replace('In stock', '').replace('(', '').replace(')', '').replace('available', '').strip()
-product_description = soup.find('div', id='product_description').find_next_sibling('p').text
-category = soup.find('ul', class_='breadcrumb').find_all('a')[2].text.strip()
-review_rating = soup.find_all('tr')[6].td.text
-star_rating = soup.find('p', class_='star-rating')['class'][1]
-base_url ='https://books.toscrape.com/'
-image_url = soup.find('img')['src'].replace('../../', base_url)
-
-data ={
-    'product_page_url':product_page_url, 
-    'universal_product_code': universal_product_code,
-    'title':title,
-    'price_including_tax' : price_including_tax,
-    'price_excluding_tax': price_excluding_tax,
-    'num_available' : num_available,
-    'product_description': product_description,
-    'category':category,
-    'review_rating': review_rating,
-    'star_rating':star_rating,
-    'image_url':image_url
-
-}
-print(data)
-
-with open('single_book.csv', 'w', newline='', encoding='utf-8') as csv_file:
-    writer = csv.DictWriter(csv_file, fieldnames=data.keys())
-    writer.writeheader()
-    writer.writerow(data)
-
-
+data_list = []
+categories = get_category_links(url)
+for categorie_url in categories:
+    while True:
+            soup = get_soup(categorie_url)
+            book_links = soup.select('h3 a')
+            for book in book_links:
+                book_url = urljoin(categorie_url, book['href'])
+                book_soup = get_soup(book_url)
+                data = {
+                    'product_page_url': book_url,
+                    'universal_product_code': get_universal_product_code(book_soup),
+                    'title': get_title(book_soup),
+                    'price_including_tax': get_price_including_tax(book_soup),
+                    'price_excluding_tax': get_price_excluding_tax(book_soup),
+                    'number_available': get_number_available(book_soup),
+                    'product_description': get_product_description(book_soup),
+                    'category': get_category(book_soup),
+                    'star_rating': get_star_rating(book_soup),
+                    'review_rating':get_review_rating(book_soup),
+                    'image_url': get_image_url(book_soup)
+                
+                }
+                print(data)
+                data_list.append(data)
+                
+     
+            
+            # Gestion de la pagination
+            next_button = soup.find(class_='next')
+            if next_button:
+                next_page_partial = next_button.find('a')['href']
+                categorie_url = urljoin(categorie_url, next_page_partial)
+            else:
+                break
+# Sauvegarde en dehors des boucles pour éviter les écritures multiples           
+save_to_csv(data_list, 'all_data.csv' )
