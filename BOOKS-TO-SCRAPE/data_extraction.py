@@ -61,15 +61,7 @@ def get_star_rating(soup):
         return words_to_nums.get(rating_word, 0)  #Retourne la valeur de la clé si celle-ci est dans le dictionnaire. Si la clé n'est pas présente, la valeur est 0
     except Exception:
         return None  
-        
-
-def get_review_rating(soup):
-    try : 
-        review_number = soup.find_all('tr')[6].td.text
-        return int(review_number)
-    except Exception:
-        return None 
-
+    
 
 def get_product_description(soup):
     try :

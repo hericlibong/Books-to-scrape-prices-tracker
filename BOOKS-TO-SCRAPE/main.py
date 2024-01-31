@@ -34,8 +34,7 @@ for categorie_url in categories:
                 'number_available': get_number_available(book_soup),
                 'product_description': get_product_description(book_soup),
                 'category': get_category(book_soup),
-                'star_rating': get_star_rating(book_soup),
-                'review_rating': get_review_rating(book_soup),
+                'review_rating': get_star_rating(book_soup),
                 'image_url': get_image_url(book_soup)
             }
             print(data)

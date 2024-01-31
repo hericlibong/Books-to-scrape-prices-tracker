@@ -48,7 +48,7 @@ def save_to_csv_by_category(data_list, category, directory='categories_data'):
     # Construit le chemin complet du fichier
     filename = os.path.join(directory, f"{category}.csv")
     
-    with open(filename, mode='a', newline='', encoding='utf-8') as csv_category:
+    with open(filename, mode='w', newline='', encoding='utf-8') as csv_category:
         writer = csv.DictWriter(csv_category, fieldnames=data_list[0].keys())
         if csv_category.tell() == 0:  # Écrit l'en-tête si le fichier est nouveau
             writer.writeheader()
