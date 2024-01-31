@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 
 
 # Fonctions de récupération des données
@@ -54,7 +55,7 @@ def get_number_available(soup):
         return None 
 
 def get_star_rating(soup):
-    words_to_nums = {'One': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5} # Dictionnaire pour convertir les mots en nombres
+    words_to_nums = {'One': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5} # Dictionnaire pour convertir les mots en chiffre
     try : 
         rating_word = soup.find('p', class_='star-rating')['class'][1]
         # Convertir le mot en nombre en utilisant le dictionnaire
@@ -65,7 +66,16 @@ def get_star_rating(soup):
 
 def get_product_description(soup):
     try :
-        return soup.find('div', id='product_description').find_next_sibling('p').text
+        description_tag = soup.find('div', id='product_description')
+        if description_tag : 
+            description = description_tag.find_next_sibling('p').text
+            description = description.replace('/', '')
+            description = description.replace('&amp;', '&')
+            description = re.sub(' +', ' ', description)
+            description = description.strip()
+            return description
+        else:
+            return None
     except Exception:
         return None 
  
