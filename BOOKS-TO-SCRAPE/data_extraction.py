@@ -84,4 +84,14 @@ def get_image_url(soup):
     try :
         return soup.find('img')['src'].replace('../../', base_url)
     except Exception:
+        return None 
+    
+def get_image_file(image_url):
+    """ Récupère les données binaires de l'image à partir de son URL"""
+    try :
+        response = requests.get(image_url)
+        response.raise_for_status()
+        return response.content
+    except requests.RequestException as e:
+        print(f"Erreur lors du téléchargement de l'image : {e}")
         return None

@@ -1,6 +1,7 @@
 from data_extraction import*
 from urllib.parse import urljoin
-from data_saver import save_to_csv, save_to_csv_by_category
+from data_saver import save_to_csv_by_category, save_image_file
+import os
 
 url = 'https://books.toscrape.com/'
 
@@ -12,6 +13,7 @@ def get_category_links(start_url):
         category_list.append(start_url + a.find('a')['href'])
    
     return category_list[1:]
+
 
 categories = get_category_links(url)
 
@@ -25,6 +27,22 @@ for categorie_url in categories:
         for book in book_links:
             book_url = urljoin(categorie_url, book['href'])
             book_soup = get_soup(book_url)
+            
+            # récupération de l'url de l'image à télécharger
+            image_url = get_image_file(book_soup)
+            image_file = get_image_file(image_url)
+
+            #contruis le chemin et le titre de sauvegarde pour l'image
+            # défini la catégorie pour la sauvegarde des données
+            category_name = get_category(book_soup).replace(' ', '_')
+            image_save_path = os.path.join('book_images', category_name, f"{get_title(book_soup).replace('/', '_').replace(' ', '_')}.jpg")
+            
+            #Sauvegarde l'image si les données sont récupérées
+            if image_file:
+                save_image_file(image_file, image_save_path)
+            
+            
+            
             data = {
                 'product_page_url': book_url,
                 'universal_product_code': get_universal_product_code(book_soup),
@@ -40,8 +58,9 @@ for categorie_url in categories:
             print(data)
             data_list.append(data)
         
-        # Sauvegarde les données de la catégorie actuelle une fois tous les livres de la page (et potentiellement de la pagination) traités
-        save_to_csv_by_category(data_list, get_category(book_soup))
+        # Sauvegarde les données de la catégorie actuelle une 
+        #fois tous les livres de la page (et potentiellement de la pagination) traités
+        save_to_csv_by_category(data_list, category_name)
         
         # Gestion de la pagination
         next_button = soup.find(class_='next')
