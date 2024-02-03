@@ -3,22 +3,33 @@ import requests
 import re
 
 
-# Fonctions de récupération des données
+# -----  Fonctions de récupération des données ------
 
 def get_soup(url):
-    response = requests.get(url)
-    if response.status_code == 200:
+    """ 
+    Fait une requête HTTP GET à l'URL spécifiée et retourne un objet BeautifulSoup du contenu HTML.
+    
+    Args:
+        url (str): URL de la page à récupérer.
+    """
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Vérifie le succès de la requête
         return BeautifulSoup(response.content, 'html.parser')
-
+    except requests.RequestException as e:
+        print(f"Erreur lors de la récupération de l'URL {url}: {e}")
+        return None
 
 
 def get_category(soup):
+    """Extrait la catégorie du produit """
     try : 
        return soup.find('ul', class_='breadcrumb').find_all('a')[2].text.strip()
     except Exception:
         return None
 
 def get_universal_product_code(soup):
+    """ Extrait le code produit universel (UPC) de la page du produit."""
     try: 
         return soup.find_all('tr')[0].td.text
     except Exception:
@@ -26,6 +37,7 @@ def get_universal_product_code(soup):
 
 
 def get_title(soup):
+    """ Extrait le titre du livre de la page du produit. """
     try :
         return soup.find('h1').text
     except Exception:
@@ -33,6 +45,12 @@ def get_title(soup):
 
 
 def get_price_including_tax(soup):
+    """
+    Extrait le prix du livre incluant les taxes
+    
+    Returns:
+        float: Prix incluant les taxes ou None en cas d'erreur.
+    """
     try:
         price_including_tax = soup.find_all('tr')[3].td.text.strip()[1:] #Enlève le sigle Livre sur le prix
         return float(price_including_tax)
@@ -40,6 +58,12 @@ def get_price_including_tax(soup):
         return None
 
 def get_price_excluding_tax(soup):
+    """
+        Extrait le prix du livre hors taxes.
+       
+       Returns:
+            float: Prix hors taxes ou None en cas d'erreur.
+    """
     try : 
         price_excluding_tax = soup.find_all('tr')[2].td.text.strip()[1:] 
         return float(price_excluding_tax)
@@ -47,6 +71,12 @@ def get_price_excluding_tax(soup):
         return None
 
 def get_number_available(soup):
+    """ 
+        Extrait le nombre d'exemplaires disponibles du produit.
+        
+        Returns:
+        int: Nombre d'exemplaires disponibles ou None en cas d'erreur.
+    """
     try : 
         num_available_raw = soup.find_all('tr')[5].td.text
         num_available = num_available_raw.replace('In stock', '').replace('(', '').replace(')', '').replace('available', '').strip()
@@ -55,6 +85,12 @@ def get_number_available(soup):
         return None 
 
 def get_star_rating(soup):
+    """
+    Extrait la note du produit sous forme d'étoiles et la convertit en nombre.
+    
+    Returns:
+        int: Note sous forme de nombre ou 0 en cas d'absence de note.
+    """
     words_to_nums = {'One': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5} # Dictionnaire pour convertir les mots en chiffre
     try : 
         rating_word = soup.find('p', class_='star-rating')['class'][1]
@@ -65,6 +101,8 @@ def get_star_rating(soup):
     
 
 def get_product_description(soup):
+    """Extrait la description du produit de la page."""
+
     try :
         description_tag = soup.find('div', id='product_description')
         if description_tag : 
@@ -80,14 +118,26 @@ def get_product_description(soup):
         return None 
  
 def get_image_url(soup):
+    """Construit l'URL complète de l'image du produit."""
     base_url = 'https://books.toscrape.com/'
     try :
         return soup.find('img')['src'].replace('../../', base_url)
     except Exception:
         return None 
     
+# ----- Récupération des images -------
+    
 def get_image_file(image_url):
-    """ Récupère les données binaires de l'image à partir de son URL"""
+    """ 
+    Télécharge les données binaires de l'image à partir de l'URL spécifiée.
+    
+    Args:
+        image_url (str): URL de l'image à télécharger.
+    
+    Returns:
+        bytes: Données binaires de l'image ou None en cas d'erreur.
+    
+    """
     try :
         response = requests.get(image_url)
         response.raise_for_status()
