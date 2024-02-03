@@ -1,11 +1,20 @@
 from data_extraction import*
 from urllib.parse import urljoin
-from data_saver import save_to_csv_by_category, save_image_file
+from data_saver import save_to_csv_by_category, save_image_file, clean_filename
 import os
 
 url = 'https://books.toscrape.com/'
 
 def get_category_links(start_url):
+    """
+    extrait la liste des catégories à partir de l'url du site
+
+    arg:
+    url du site
+    
+    return:
+    la liste des catégories exclut la base liste (list)
+    """
     soup = get_soup(start_url)
     category_list = []
     list_link = soup.find('ul', class_= 'nav').find_all('li')
@@ -29,19 +38,22 @@ for categorie_url in categories:
             book_soup = get_soup(book_url)
             
             # récupération de l'url de l'image à télécharger
-            image_url = get_image_file(book_soup)
+            image_url = get_image_url(book_soup)
             image_file = get_image_file(image_url)
 
-            #contruis le chemin et le titre de sauvegarde pour l'image
+            #construit le chemin et le titre de sauvegarde pour l'image
             # défini la catégorie pour la sauvegarde des données
-            category_name = get_category(book_soup).replace(' ', '_')
-            image_save_path = os.path.join('book_images', category_name, f"{get_title(book_soup).replace('/', '_').replace(' ', '_')}.jpg")
+            category_name = get_category(book_soup)
+
+
+            # Construit le chemin de sauvegarde pour l'image, nettoie uniquement le titre du livre
+            MAX_TITLE_LENGTH = 100 #limite la longueur des caractères dans le titre/nom de fichier selon les restrictions windows
+            book_title_cleaned = clean_filename(get_title(book_soup))[:MAX_TITLE_LENGTH]
+            image_save_path = os.path.join('book_images', category_name, f"{book_title_cleaned}.jpg")
             
             #Sauvegarde l'image si les données sont récupérées
             if image_file:
                 save_image_file(image_file, image_save_path)
-            
-            
             
             data = {
                 'product_page_url': book_url,
@@ -57,6 +69,9 @@ for categorie_url in categories:
             }
             print(data)
             data_list.append(data)
+        
+
+
         
         # Sauvegarde les données de la catégorie actuelle une 
         #fois tous les livres de la page (et potentiellement de la pagination) traités
