@@ -4,31 +4,38 @@ from urllib.parse import urljoin
 import os
 
 
-url = 'https://books.toscrape.com/'
+url = 'https://books.toscrape.com/'  #URL de base du site à scraper
 
 
 def process_book(book_url, category_name):
-    """Traite un livre individuel.Prend l'URL du livre et le nom de la catégorie en paramètres"""
+    """
+    Traite un livre individuel et extrait les données pertinentes.
+    
+    Args:
+        book_url (str): URL de la page du livre à traiter.
+        category_name (str): Nom de la catégorie du livre pour le sauvegarde d'images.
+        
+    Returns:
+        dict: Dictionnaire contenant les données extraites du livre.
+    """
     
     book_soup = get_soup(book_url) #Obtient le contenu HTML de la page du livre et le convertit en objet BeautifulSoup
     
-    # Extrait les données de l'image du livre et télécharge les données binaires de l'image
+    # Extrait l'URL de l'image du livre et télécharge les données binaires de l'image
     image_url = get_image_url(book_soup)
     image_file = get_image_file(image_url)
 
-    #Nettoie le titre du livre pour l'utiliser comme nom de fichier avec une limitation 
-    #de longueur pour éviter les problèmes avec les systèmes de fichcier
-    #Contruit le chemin complet où l'image sera sauvegardée(dossier/sous-dossier)
+    # Nettoie le titre du livre et construit le chemin complet de sauvegarde de l'image
     MAX_TITLE_LENGTH = 80
     book_title_cleaned = clean_filename(get_title(book_soup))[:MAX_TITLE_LENGTH]
     image_save_path = os.path.join('book_images', category_name, f"{book_title_cleaned}.jpg")
 
-    #si les données de l'image sont disponibles, sauvegarde de l'image dans le chemin spécifié
+    # Sauvegarde l'image si disponible
     if image_file:
         save_image_file(image_file, image_save_path)
     
 
-    #retourne un dictionnaire contenant les données extraites du livre
+    #retourne un dictionnaire avec les données du livre
     return {
             'product_page_url': book_url,
             'universal_product_code': get_universal_product_code(book_soup),
@@ -44,47 +51,51 @@ def process_book(book_url, category_name):
 
 
 def process_category(category_url):
-    """Fonction pour traiter tous les livres d'une catégorie tenant compte de la pagination"""
-    data_list = [] 
+    """
+    Traite tous les livres d'une catégorie, incluant la gestion de la pagination.
     
-    #Initialise une liste pour stocker les données de tous les livres d'une catégorie
-    #Entame une boucle pour traiter chaque page de la catégorie
-    #Obtient le contenu de la page actuelle et extrait les liens vers les livres
-    #Itère sur chaque lien de livre trouvé 
+    Args:
+        category_url (str): URL de la catégorie à traiter.
+    """
+    data_list = [] # Initialise une liste pour stocker les données des livres
     
-    while True:
+    while True: # Traore chaque page de la catégorie
         soup = get_soup(category_url)
         book_links = soup.select('h3 a')
-        for book in book_links:
+        for book in book_links: # Itère sur chaque livre trouvé
             book_url = urljoin(category_url, book['href'])
 
-            #Construit l'URL complète du livre et appelle 'process_book' pour traiter le livre
+            
             data = process_book(book_url, get_category(get_soup(book_url)))
-            print(data)
+            print(data) # Affiche les données du livre (pour le débogage ou le suivie)
             data_list.append(data)
 
-        # Si les données sont collectées, elles sont sauvegardées par catégorie dans un fichier csv
-        if data_list:
+        
+        if data_list: # Sauvegarde les données dans un fichier CSV par catégorie
             save_to_csv_by_category(data_list, data_list[0]['category'])
             data_list = [] # Réinitialise la liste pour la prochaine page
 
-        # --Génèration de la pagination---
+        # Gestion de la pagination
         next_button = soup.find(class_='next')
         if next_button:
-            next_page_partial = next_button.find('a')['href'] # Récupère le lien de la page suivante
-            category_url = urljoin(category_url, next_page_partial) # Reconstruction du lien vers la page suivante
+            next_page_partial = next_button.find('a')['href'] 
+            category_url = urljoin(category_url, next_page_partial) # Prépare de la page suivante
         else:
-            break # Stop la boucle si la page suivante n'est pas trouvée
+            break # Sort de la boucle si aucune page suivante n'est trouvée
         
-# Point d'entrée principal
-#Définit la fonction principale qui commence par récupérer 
-# tous les liens de catégories et les traite un par un.
+
 def main():
+    """
+    Point d'entrée principal pour le script de scraping.
+    Récupère les liens de toutes les catégories et les traite une par une.
+    """
     categories = get_category_links(url)
     for cat_url in categories:
         process_category(cat_url)
 
+    
+
 
 if __name__=="__main__":
-    main()
+    main() # Exécute la fonction main si le script est exécuté directement
 
