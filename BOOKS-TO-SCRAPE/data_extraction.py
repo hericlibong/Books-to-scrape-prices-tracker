@@ -19,6 +19,24 @@ def get_soup(url):
     except requests.RequestException as e:
         print(f"Erreur lors de la récupération de l'URL {url}: {e}")
         return None
+    
+def get_category_links(start_url):
+    """
+    extrait la liste des catégories à partir de l'url du site
+
+    arg:
+    url du site
+    
+    return:
+    la liste des catégories exclut la base liste (list)
+    """
+    soup = get_soup(start_url)
+    category_list = []
+    list_link = soup.find('ul', class_= 'nav').find_all('li')
+    for a in list_link:
+        category_list.append(start_url + a.find('a')['href'])
+   
+    return category_list[1:]
 
 
 def get_category(soup):

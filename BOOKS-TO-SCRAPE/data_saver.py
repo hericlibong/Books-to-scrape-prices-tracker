@@ -22,6 +22,7 @@ def clean_filename(name):
             
 
 def save_to_csv_by_category(data_list, category, directory='categories_data'):  
+    """Sauvegarde les données par catégorie dans un fichier csv"""
     category_cleaned = clean_filename(category)
     
     # Crée le dossier des csv si celui-ci n'existe pas
