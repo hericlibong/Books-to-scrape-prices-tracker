@@ -56,7 +56,13 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
 
 Détails sur comment lancer le script pour récupérer les données.
 
+1. Aller dans le dossier du scraper :
+  ```
+  cd BOOKS-TO-SCRAPE
+  ```
+
 Pour lancer le script, exécutez dans le terminal :
+
 
 ``` 
 python main.py
