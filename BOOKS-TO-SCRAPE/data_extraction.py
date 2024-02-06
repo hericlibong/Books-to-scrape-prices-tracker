@@ -152,6 +152,7 @@ def get_image_file(image_url):
     Args:
         image_url (str): URL de l'image à télécharger.
     
+    
     Returns:
         bytes: Données binaires de l'image ou None en cas d'erreur.
     
