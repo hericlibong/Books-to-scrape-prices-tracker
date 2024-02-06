@@ -22,17 +22,17 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
 ### Configuration de l'environnement à partir du terminal
 
 1. Clonez le dépôt GitHub :
-- ```
+  ```
   git clone https://github.com/hericlibong/Books-to-scrape-prices-tracker.git
   ```
 
 2. Allez dans dossier du projet
-- ```
+  ```
   cd Books-to-scrape-prices-tracker
   ```
 
 3. Installez un environnement virtuel :
-- ```
+  ```
   python -m venv venv
   ```
 
@@ -47,7 +47,7 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
   ```
 
 5. Installez les dépendances :
- - ```
+  ```
   pip install -r requirements.txt
   ```
 
@@ -61,8 +61,6 @@ Pour lancer le script, exécutez dans le terminal :
 ``` 
 python main.py
 ```
-
-
 ---
 
 Pour toute question ou suggestion, n'hésitez pas à ouvrir un issue dans le dépôt GitHub.
