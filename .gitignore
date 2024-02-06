@@ -1,3 +1,11 @@
 env/
-BOOK-TO-SCRAPE/*.csv
+BOOKS-TO-SCRAPE/*.csv
 P1_Base_Python_Analyse_Marche/*.csv
+P1_Base_Python_Analyse_Marche/drafts/*.py
+P1_Base_Python_Analyse_Marche/drafts/*.csv
+drafts/
+
+.~lock.all_data.csv#
+.~lock.category_books.csv#
+categories_data/
+book_images/

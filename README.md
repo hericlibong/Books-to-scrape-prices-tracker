@@ -19,15 +19,24 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
 - BeautifulSoup4
 - Requests
 
-### Configuration de l'environnement
+### Configuration de l'environnement à partir du terminal
 
 1. Clonez le dépôt GitHub :
+- ```
+  git clone https://github.com/hericlibong/Books-to-scrape-prices-tracker.git
+  ```
 
+2. Allez dans dossier du projet
+- ```
+  cd Books-to-scrape-prices-tracker
+  ```
 
-2. Installez un environnement virtuel :
+3. Installez un environnement virtuel :
+- ```
+  python -m venv venv
+  ```
 
-
-3. Activez l'environnement virtuel :
+4. Activez l'environnement virtuel :
 - Sur Windows :
   ```
   venv\Scripts\activate
@@ -36,8 +45,9 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
   ```
   source venv/bin/activate
   ```
-4. Installez les dépendances :
-  ```
+
+5. Installez les dépendances :
+ - ```
   pip install -r requirements.txt
   ```
 
@@ -48,7 +58,7 @@ Détails sur comment lancer le script pour récupérer les données.
 
 Pour lancer le script, exécutez dans le terminal :
 
-```
+``` 
 python main.py
 ```
 
