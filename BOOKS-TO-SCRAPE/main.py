@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 import os
 
 
-url = 'https://books.toscrape.com/'  #URL de base du site à scraper
 
 
 def process_book(book_url):
@@ -25,7 +24,7 @@ def process_book(book_url):
     image_url = get_image_url(book_soup)
     image_file = get_image_file(image_url)
     if image_file:
-        save_image_file(image_file, get_category(book_soup), get_title(book_soup))
+        save_image_file(image_file, get_category(book_soup), get_universal_product_code(book_soup))
 
     #retourne un dictionnaire avec les données du livre
     return {
@@ -72,6 +71,8 @@ def process_category(category_url):
         else:
             break # Sort de la boucle si aucune page suivante n'est trouvée
         
+
+url = 'https://books.toscrape.com/'  #URL de base du site à scraper
 
 def main():
     """

@@ -52,14 +52,14 @@ def save_to_csv_by_category(data_list, category, directory='categories_data'):
 
 # Sauvegarde des images
             
-def save_image_file(image_file, title, category, base_directory='book_images', max_title_length=80):
+def save_image_file(image_file, category, attribut, base_directory='book_images', max_title_length=80):
     """
     Sauvegarde une image téléchargée dans un répertoire spécifié, en utilisant un titre nettoyé et limité en longueur
     pour le nom de fichier, organisé par catégorie.
 
     Args:
         image_file (bytes): Les données binaires de l'image à sauvegarder.
-        title (str): Le titre du livre, utilisé pour nommer le fichier image.
+        attribut (str): l'attribut du livre utilisé pour nommer le fichier image.
         category (str): La catégorie du livre, utilisée pour organiser les images dans des sous-dossiers.
         base_directory (str, optional): Le dossier de base pour sauvegarder les images. Par défaut à 'book_images'.
         max_title_length (int, optional): La longueur maximale du titre pour éviter les erreurs liées à des noms de fichiers trop longs. Par défaut à 80.
@@ -67,8 +67,8 @@ def save_image_file(image_file, title, category, base_directory='book_images', m
     Retourne:
         None. Crée un fichier image dans le système de fichiers, ou affiche un message si aucun fichier image n'est à sauvegarder.
     """
-    title_cleaned = clean_filename(title)[:max_title_length]
-    image_save_path = os.path.join(base_directory, clean_filename(category), f"{title_cleaned}.jpg")
+    #title_cleaned = clean_filename(title)[:max_title_length]
+    image_save_path = os.path.join(base_directory, clean_filename(category), f"{attribut}.jpg")
 
     if image_file:
         os.makedirs(os.path.dirname(image_save_path), exist_ok=True)
