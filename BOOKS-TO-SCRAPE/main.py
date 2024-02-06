@@ -7,7 +7,7 @@ import os
 url = 'https://books.toscrape.com/'  #URL de base du site à scraper
 
 
-def process_book(book_url, category_name):
+def process_book(book_url):
     """
     Traite un livre individuel et extrait les données pertinentes.
     
@@ -24,16 +24,8 @@ def process_book(book_url, category_name):
     # Extrait l'URL de l'image du livre et télécharge les données binaires de l'image
     image_url = get_image_url(book_soup)
     image_file = get_image_file(image_url)
-
-    # Nettoie le titre du livre et construit le chemin complet de sauvegarde de l'image
-    MAX_TITLE_LENGTH = 80
-    book_title_cleaned = clean_filename(get_title(book_soup))[:MAX_TITLE_LENGTH]
-    image_save_path = os.path.join('book_images', category_name, f"{book_title_cleaned}.jpg")
-
-    # Sauvegarde l'image si disponible
     if image_file:
-        save_image_file(image_file, image_save_path)
-    
+        save_image_file(image_file, get_category(book_soup), get_title(book_soup))
 
     #retourne un dictionnaire avec les données du livre
     return {
@@ -64,16 +56,13 @@ def process_category(category_url):
         book_links = soup.select('h3 a')
         for book in book_links: # Itère sur chaque livre trouvé
             book_url = urljoin(category_url, book['href'])
-
-            
-            data = process_book(book_url, get_category(get_soup(book_url)))
+            data = process_book(book_url) # Passe la fonction process_book pour extraire les données d'un livre
             print(data) # Affiche les données du livre (pour le débogage ou le suivie)
             data_list.append(data)
-
         
         if data_list: # Sauvegarde les données dans un fichier CSV par catégorie
             save_to_csv_by_category(data_list, data_list[0]['category'])
-            data_list = [] # Réinitialise la liste pour la prochaine page
+           
 
         # Gestion de la pagination
         next_button = soup.find(class_='next')
@@ -92,8 +81,6 @@ def main():
     categories = get_category_links(url)
     for cat_url in categories:
         process_category(cat_url)
-
-    
 
 
 if __name__=="__main__":
