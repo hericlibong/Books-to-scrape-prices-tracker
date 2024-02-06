@@ -15,7 +15,7 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
 
 ### Prérequis
 
-- Python 3.8+
+- Python 3.9+
 - BeautifulSoup4
 - Requests
 
@@ -37,16 +37,20 @@ Instructions pour configurer l'environnement, installer les dépendances, et ex�
   source venv/bin/activate
   ```
 4. Installez les dépendances :
+  ```
+  pip install -r requirements.txt
+  ```
 
 
 ## Utilisation
 
 Détails sur comment lancer le script pour récupérer les données.
 
-Pour lancer le script, exécutez :
+Pour lancer le script, exécutez dans le terminal :
 
-
-
+```
+python main.py
+```
 
 
 ---
