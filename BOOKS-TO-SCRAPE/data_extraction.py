@@ -57,7 +57,7 @@ def get_universal_product_code(soup):
 def get_title(soup):
     """ Extrait le titre du livre de la page du produit. """
     try :
-        return soup.find('h1').text
+        return soup.find('h1').text.lower().replace('"', '')
     except Exception:
         return None
 
