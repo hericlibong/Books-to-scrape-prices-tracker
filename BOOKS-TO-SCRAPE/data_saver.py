@@ -2,10 +2,13 @@ import csv
 import os
 import re
 
+
+
 def clean_filename(name):
     """
-    Nettoie le nom pour le rendre valide comme nom de fichier ou dossier sous Windows.
-    
+    Nettoie le nom pour le rendre valide comme nom de fichier ou dossier sous Windows. 
+    Nettoie aussi les noms de dossiers des catégories.
+
     Args:
         name (str): Le nom du fichier ou dossier à nettoyer.
         
@@ -19,7 +22,7 @@ def clean_filename(name):
 
 
 
-
+# Sauvegarde des données des livres par catégorie
 
 def save_to_csv_by_category(data_list, category, directory='categories_data'):
     """
@@ -47,18 +50,31 @@ def save_to_csv_by_category(data_list, category, directory='categories_data'):
 
 
 
+# Sauvegarde des images
+            
+def save_image_file(image_file, title, category, base_directory='book_images', max_title_length=80):
+    """
+    Sauvegarde une image téléchargée dans un répertoire spécifié, en utilisant un titre nettoyé et limité en longueur
+    pour le nom de fichier, organisé par catégorie.
 
-def save_image_file(image_file, save_path):
-    """
-    Sauvegarde les données binaires de l'image à l'emplacement spécifié.
-    
     Args:
-        image_file (bytes): Données binaires de l'image à sauvegarder.
-        save_path (str): Chemin complet où sauvegarder l'image.
+        image_file (bytes): Les données binaires de l'image à sauvegarder.
+        title (str): Le titre du livre, utilisé pour nommer le fichier image.
+        category (str): La catégorie du livre, utilisée pour organiser les images dans des sous-dossiers.
+        base_directory (str, optional): Le dossier de base pour sauvegarder les images. Par défaut à 'book_images'.
+        max_title_length (int, optional): La longueur maximale du titre pour éviter les erreurs liées à des noms de fichiers trop longs. Par défaut à 80.
+
+    Retourne:
+        None. Crée un fichier image dans le système de fichiers, ou affiche un message si aucun fichier image n'est à sauvegarder.
     """
+    title_cleaned = clean_filename(title)[:max_title_length]
+    image_save_path = os.path.join(base_directory, clean_filename(category), f"{title_cleaned}.jpg")
+
     if image_file:
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)  # Crée le dossier si nécessaire.
-        with open(save_path, 'wb') as file:
-            file.write(image_file)  # Écrit les données de l'image dans le fichier.
+        os.makedirs(os.path.dirname(image_save_path), exist_ok=True)
+        with open(image_save_path, 'wb') as file:
+            file.write(image_file)
     else:
-        print("Aucun fichier image n'est à sauvegarder.")  # Gère le cas où aucune image n'est disponible.
+        print("Aucun fichier image n'est à sauvegarder")
+
+
