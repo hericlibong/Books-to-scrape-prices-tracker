@@ -12,7 +12,7 @@ def process_book(book_url):
     
     Args:
         book_url (str): URL de la page du livre à traiter.
-        category_name (str): Nom de la catégorie du livre pour le sauvegarde d'images.
+        
         
     Returns:
         dict: Dictionnaire contenant les données extraites du livre.
