@@ -1,7 +1,7 @@
 from data_extraction import*
 from data_saver import*
 from urllib.parse import urljoin
-import os
+
 
 
 
@@ -49,6 +49,7 @@ def process_category(category_url):
         category_url (str): URL de la catégorie à traiter.
     """
     data_list = [] # Initialise une liste pour stocker les données des livres
+
     
     while True: # Traore chaque page de la catégorie
         soup = get_soup(category_url)
@@ -56,11 +57,14 @@ def process_category(category_url):
         for book in book_links: # Itère sur chaque livre trouvé
             book_url = urljoin(category_url, book['href'])
             data = process_book(book_url) # Passe la fonction process_book pour extraire les données d'un livre
-            print(data) # Affiche les données du livre (pour le débogage ou le suivie)
+            #print(data) # Affiche les données du livre (pour le débogage ou le suivie)
             data_list.append(data)
+            print(data_list)  
         
         if data_list: # Sauvegarde les données dans un fichier CSV par catégorie
             save_to_csv_by_category(data_list, data_list[0]['category'])
+           
+            
            
 
         # Gestion de la pagination
