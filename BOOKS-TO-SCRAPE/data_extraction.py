@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+from unidecode import unidecode
 
 
 # -----  Fonctions de récupération des données ------
@@ -22,7 +23,7 @@ def get_soup(url):
     
 def get_category_links(start_url):
     """
-    extrait la liste des catégories à partir de l'url du site
+    extrait la liste des urls des catégories à partir de l'url du site
 
     arg:
     url du site
@@ -36,7 +37,7 @@ def get_category_links(start_url):
     for a in list_link:
         category_list.append(start_url + a.find('a')['href'])
    
-    return category_list[1:]
+    return category_list[1:] # supprime l'url de la catégorie "books"
 
 
 def get_category(soup):
@@ -129,7 +130,7 @@ def get_product_description(soup):
             description = description.replace('&amp;', '&')
             description = re.sub(' +', ' ', description)
             description = description.strip()
-            return description
+            return unidecode(description)
         else:
             return None
     except Exception:
