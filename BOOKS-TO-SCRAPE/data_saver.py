@@ -35,8 +35,8 @@ def save_to_csv_by_category(data_list, category, directory='categories_data'):
     """
     category_cleaned = clean_filename(category)  # Nettoie le nom de la catégorie pour le fichier.
     
-    if not os.path.exists(directory):
-        os.makedirs(directory)  # Crée le dossier si non existant.
+    
+    os.makedirs(directory, exist_ok=True)  # Crée le dossier si non existant.
     
     filename = os.path.join(directory, f"{category_cleaned}.csv")  # Construit le chemin du fichier.
     
